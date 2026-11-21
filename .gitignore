@@ -1,0 +1,17 @@
+# Obsidian 개인 화면 설정 (기기마다 다름)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.trash/
+
+# 이전 SQLite 실습 파일 (사용 안 함)
+db/cafe.db
+
+# 운영체제 임시 파일
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# 비밀정보
+.env
+*.secret

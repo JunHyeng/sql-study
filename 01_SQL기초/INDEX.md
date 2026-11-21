@@ -1,0 +1,24 @@
+---
+title: 1단계 SQL 기초 목차
+date: 2026-11-21
+tags: [sql, 1단계, index]
+---
+
+# 1단계: SQL 기초
+
+역할: 전문 SQL 강사. 완전 초급부터 시작해 한 강씩 진행하고, 이해 확인 후 다음 강으로 넘어갑니다. 실습 DB는 베라 카페 DB([환경 설정](../00_환경설정.md) 하단에 구조 정리)입니다.
+
+| 강 | 주제 | 상태 |
+|---|---|---|
+| 1 | [데이터베이스와 SELECT](01-01_데이터베이스와_SELECT.md): 테이블·행·열, SELECT/FROM, 별칭(AS) | 완료 (5/5) |
+| 2 | [WHERE로 조건 걸기](01-02_WHERE로_조건_걸기.md): 비교·논리 연산자, BETWEEN, IN, LIKE | 완료 (7.5/8) |
+| 3 | [NULL 다루기](01-03_NULL_다루기.md): IS NULL, IFNULL/COALESCE | 진행 중 |
+| 4 | 정렬과 개수 제한: ORDER BY, LIMIT, DISTINCT | 예정 |
+| 5 | 계산과 함수: 산술 연산, 문자열·날짜 함수, CASE WHEN | 예정 |
+| 6 | 집계 함수: COUNT, SUM, AVG, MIN, MAX | 예정 |
+| 7 | GROUP BY와 HAVING 맛보기 | 예정 |
+| 8 | JOIN 입문: INNER JOIN, LEFT JOIN | 예정 |
+| 9 | 데이터 변경: INSERT, UPDATE, DELETE | 예정 |
+| 10 | 테이블 만들기: CREATE TABLE, 자료형, 기본키·외래키 + 1단계 종합 테스트 | 예정 |
+
+Up: [대시보드](../README.md)
