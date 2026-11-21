@@ -28,6 +28,9 @@ aliases: [깃허브 가이드]
    - Name: `sql-study`
    - Git ignore: None (아래 `.gitignore`를 직접 만듭니다)
    - Create repository
+> [!WARNING]
+> 만들기 창의 **Local path**가 `D:\study\sql`인 상태에서 Name을 `sql-study`로 바꾸면 `D:\study\sql\sql-study`라는 **빈 하위 폴더**에 저장소가 생깁니다. 그러면 노트가 저장소 밖에 있어서 "0 changed files"로 나옵니다. 저장소(`.git` 폴더)는 반드시 노트들과 같은 `D:\study\sql` 바로 안에 있어야 합니다.
+
 5. 상단 **Publish repository** → "Keep this code private" **체크 해제**(공개) → Publish.
 
 ### `.gitignore` (올리지 않을 파일 목록)
