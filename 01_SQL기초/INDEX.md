@@ -14,8 +14,8 @@ tags: [sql, 1단계, index]
 | 2 | [WHERE로 조건 걸기](01-02_WHERE로_조건_걸기.md): 비교·논리 연산자, BETWEEN, IN, LIKE | 완료 (7.5/8) |
 | 3 | [NULL 다루기](01-03_NULL_다루기.md): IS NULL, IFNULL/COALESCE | 완료 (5/6) |
 | 4 | [정렬과 개수 제한](01-04_정렬과_개수_제한.md): ORDER BY, LIMIT, DISTINCT | 완료 (7/8) |
-| 5 | [계산과 함수](01-05_계산과_함수.md): 산술 연산, 문자열·날짜 함수, CASE WHEN | 진행 중 |
-| 6 | 집계 함수: COUNT, SUM, AVG, MIN, MAX | 예정 |
+| 5 | [계산과 함수](01-05_계산과_함수.md): 산술 연산, 문자열·날짜 함수, CASE WHEN | 완료 (9/9) |
+| 6 | [집계 함수](01-06_집계_함수.md): COUNT, SUM, AVG, MIN, MAX | 진행 중 |
 | 7 | GROUP BY와 HAVING 맛보기 | 예정 |
 | 8 | JOIN 입문: INNER JOIN, LEFT JOIN | 예정 |
 | 9 | 데이터 변경: INSERT, UPDATE, DELETE | 예정 |
