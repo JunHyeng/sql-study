@@ -15,8 +15,8 @@ tags: [sql, 1단계, index]
 | 3 | [NULL 다루기](01-03_NULL_다루기.md): IS NULL, IFNULL/COALESCE | 완료 (5/6) |
 | 4 | [정렬과 개수 제한](01-04_정렬과_개수_제한.md): ORDER BY, LIMIT, DISTINCT | 완료 (7/8) |
 | 5 | [계산과 함수](01-05_계산과_함수.md): 산술 연산, 문자열·날짜 함수, CASE WHEN | 완료 (9/9) |
-| 6 | [집계 함수](01-06_집계_함수.md): COUNT, SUM, AVG, MIN, MAX | 진행 중 |
-| 7 | GROUP BY와 HAVING 맛보기 | 예정 |
+| 6 | [집계 함수](01-06_집계_함수.md): COUNT, SUM, AVG, MIN, MAX | 완료 (10/10) |
+| 7 | [GROUP BY와 HAVING](01-07_GROUP_BY와_HAVING.md): 그룹별 집계, 그룹 조건 | 진행 중 |
 | 8 | JOIN 입문: INNER JOIN, LEFT JOIN | 예정 |
 | 9 | 데이터 변경: INSERT, UPDATE, DELETE | 예정 |
 | 10 | 테이블 만들기: CREATE TABLE, 자료형, 기본키·외래키 + 1단계 종합 테스트 | 예정 |
