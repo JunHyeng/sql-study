@@ -69,10 +69,10 @@ aliases: [깃허브 가이드]
 
 ## 체크리스트
 
-- [ ] GitHub 가입
-- [ ] GitHub Desktop 설치 및 로그인
-- [ ] `D:\study\sql`을 `sql-study` 저장소로 만들고 Publish (공개)
-- [ ] 첫 커밋: `docs: SQL 학습 저장소 시작`
+- [x] GitHub 가입
+- [x] GitHub Desktop 설치 및 로그인
+- [x] `D:\study\sql`을 `sql-study` 저장소로 만들고 Publish (공개)
+- [x] 첫 커밋: `docs: SQL 학습 저장소 시작`
 
 Related: [환경 설정](00_환경설정.md) · [5단계 포트폴리오](05_포트폴리오/INDEX.md)
 Up: [대시보드](README.md)
