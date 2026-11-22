@@ -171,62 +171,104 @@ SELECT customer_id, COUNT(*) FROM orders WHERE COUNT(*) >= 2 GROUP BY customer_i
 
 **복습.** 맨 위 0번의 ①~④ 쿼리 결과가 각각 몇 행인지 적고, 왜 그런지 한 줄로 설명하세요.
 
-> ① 행 / ② 행 / ③ 행 / ④ 행
-> 이유:
+> ① 12행 / ② 1행 / ③ 4행 / ④ 1행
+> 이유: 행단위 함수 ROUND(), 집계 함수SUM()을 사용해서 다르게 나옴. 집계 함수는 결과 합계값만 나오기 때문에 행이 합계 칸 1개만 나옵니다.
 
 **문제 1.** 분류별 메뉴 수를 조회하세요. 열 이름은 `분류`, `메뉴수`. (결과 3행)
 
 ```sql
-
+select category as 분류, count(*) as 매뉴수 from menu group by category;
 ```
 
 **문제 2.** 분류별 평균 가격(정수 반올림)을 조회하고 **평균 가격이 높은 순**으로 정렬하세요. 열 이름은 `분류`, `평균가격`. (결과 3행, 첫 행 논커피 5167)
 
 ```sql
-
+select category as 분류, ROUND(avg(price)) as 평균가격 from menu group by category order by 평균가격 desc;
 ```
 
 **문제 3.** 지역별 고객 수를 조회하고, **고객 수가 많은 순**, 같으면 **지역 이름 순**으로 정렬하세요. 열 이름은 `지역`, `고객수`. (결과 4행, 첫 행 서울 5)
 
 ```sql
-
+select city as 지역, count(*) as 고객수 from customers group by city order by 고객수 desc, 지역 asc;
 ```
 
 **문제 4.** 결제수단별 주문 수를 많은 순으로 조회하세요. 열 이름은 `결제수단`, `주문수`. (결과 3행, 첫 행 카드 10)
 
 ```sql
-
+select payment as 결제수단, count(*) as 주문수 from orders group by payment order by 주문수 desc;
 ```
 
 **문제 5.** **회원 주문만** 대상으로, 고객번호별 주문 횟수를 조회하세요. 주문 횟수가 많은 순, 같으면 고객번호 순. 열 이름은 `고객번호`, `주문횟수`. (결과 9행, 첫 행 1번 고객 3회)
 
 ```sql
-
+select customer_id as 고객번호, count(*) as 주문횟수 from orders where customer_id is not null group by customer_id;
 ```
 
 **문제 6.** `order_items`에서 메뉴번호별 총 판매 수량을 많은 순으로 **상위 3개**만 조회하세요. 같으면 메뉴번호 순. 열 이름은 `메뉴번호`, `판매수량`. (결과 3행, 첫 행 2번 메뉴 7개)
 → 메뉴번호 대신 메뉴 이름을 보려면 두 테이블을 합쳐야 합니다. 그게 8강 JOIN입니다.
 
 ```sql
-
+select menu_id as 메뉴번호, sum(quantity) as 판매수량 from order_items group by menu_id order by 판매수량 desc, 메뉴번호 asc limit 3;
 ```
 
 **문제 7.** 가격대별 메뉴 수를 조회하세요. 가격대는 5강 7번과 같이 3000원 미만 `저가`, 5000원 미만 `중가`, 나머지 `고가`. 열 이름은 `가격대`, `메뉴수`. (결과 3행: 고가 8, 저가 1, 중가 3)
 
 ```sql
+select
 
+case
+
+when price < 3000 then '저가'
+
+when price < 5000 then '중가'
+
+else '고가'
+
+end as 가격대,
+
+count(*) as 메뉴수
+
+from menu
+
+group by 가격대
+
+order by 메뉴수 desc;
 ```
 
 **문제 8.** **2번 이상** 주문한 회원의 고객번호와 주문 횟수를 조회하세요. 열 이름은 `고객번호`, `주문횟수`. (결과 5행)
 
 ```sql
+select
 
+customer_id as 고객번호,
+
+count(*) as 주문횟수
+
+from orders
+
+where customer_id is not null
+
+group by customer_id
+
+having count(*) >= 2;
 ```
 
 **문제 9.** 평균 가격이 **5000원 이상**인 분류와 그 평균 가격(정수 반올림)을 조회하세요. 열 이름은 `분류`, `평균가격`. (결과 2행)
 
 ```sql
+select
 
+category as 분류,
+
+round(avg(price)) as 평균가격
+
+from menu
+
+group by 분류
+
+having 평균가격 >= 5000
+
+order by 평균가격 desc;
 ```
 
 **문제 10. (함정 문제)** 아래 쿼리를 실행해 보고 오류 메시지와 이유를 적은 뒤, 8번과 같은 결과가 나오도록 고치세요.
@@ -239,27 +281,110 @@ GROUP BY customer_id;
 ```
 
 오류 메시지와 이유:
->
+>오류 메시지 : 'SQL 오류 [1111] [HY000]: Invalid use of group function'
+>이유 : where절에는 집계 함수를 못씀.
 
 고친 쿼리:
 
 ```sql
+SELECT customer_id, COUNT(*) AS 주문횟수
 
+FROM orders
+
+GROUP BY customer_id
+
+having COUNT(*) >= 2;
 ```
 
 ## 이해 확인 질문
 
 1. `GROUP BY category`를 하면 SELECT에 `name`을 쓸 수 없는 이유는 무엇인가요?
+	그룹 기준이랑 집계 함수만 가능함. name을 쓰게 되면 기준이 여러개가 되어서 사용불가
 2. "가격이 5000원 이상인 메뉴만 대상으로, 분류별 메뉴 수"를 구할 때 `price >= 5000` 조건은 WHERE와 HAVING 중 어디에 써야 하나요? 이유는?
+	분류별 메뉴 수 있므로, having 사용
 3. 아래 쿼리 각 줄의 **실행 순서**를 번호로 적어 보세요.
    ```sql
-   SELECT category, COUNT(*)    -- ?
-   FROM menu                    -- ?
-   WHERE price >= 4000          -- ?
-   GROUP BY category            -- ?
-   HAVING COUNT(*) >= 3         -- ?
-   ORDER BY category;           -- ?
+   SELECT category, COUNT(*)    -- 5
+   FROM menu                    -- 1
+   WHERE price >= 4000          -- 2
+   GROUP BY category            -- 3
+   HAVING COUNT(*) >= 3         -- 4
+   ORDER BY category;           -- 6
    ```
 
-Related: [6강 집계 함수](01-06_집계_함수.md) · [5강 계산과 함수](01-05_계산과_함수.md) · [오답노트](../오답노트.md)
+---
+
+## 채점 결과 (2026-11-22)
+
+**복습 정답, 쿼리 8.5 / 10, 이해 확인 2 / 3 → WHERE vs HAVING 재확인 후 8강 진행**
+
+| 문제 | 결과 | 코멘트 |
+|---|---|---|
+| 복습 | 정답 | 행 단위 함수 N행 → N행, 집계 함수 N행 → 1행. 6강 확인 3번 해결 ✅ |
+| 1 | 정답 (오타) | 별칭 `매뉴수` → `메뉴수`. 보고서 머리글 오타는 실무에서 그대로 노출되니 실행 후 머리글도 한 번 보세요. |
+| 2~4 | 정답 | 3번 정렬 기준 두 개까지 정확합니다. |
+| 5 | **부분 정답** | `ORDER BY 주문횟수 DESC, 고객번호`가 빠졌습니다. ORDER BY가 없으면 순서가 보장되지 않습니다. (4강 LIMIT 내용과 같은 원리) |
+| 6 | 정답 | GROUP BY + SUM + ORDER BY 두 기준 + LIMIT, 1단계 문법을 전부 조합했습니다. |
+| 7 | 정답 | CASE 결과로 묶기, 정확합니다. |
+| 8 | 정답 | WHERE(행 거르기) → GROUP BY → HAVING(그룹 거르기) 완벽합니다. |
+| 9 | 정답 (주의점) | 아래 피드백 2 |
+| 10 | **부분 정답** | 오류 메시지와 이유까지 정확히 적었습니다 👍 고친 쿼리는 아래 피드백 1 |
+| 확인 1 | 정답 | |
+| 확인 2 | **오답** | 아래 피드백 3 (가장 중요) |
+| 확인 3 | 정답 | 5-1-2-3-4-6 정확합니다. |
+
+### 피드백 1: 10번, "8번과 같은 결과"가 아니라 6행이 나옵니다
+
+고친 쿼리에서 `WHERE customer_id IS NOT NULL`이 빠져서, **비회원 주문(NULL) 2건이 한 그룹**으로 묶이고 `COUNT(*) = 2`라서 HAVING도 통과합니다. 결과가 5행이 아니라 **6행**(고객번호 NULL, 2회 포함)이 됩니다.
+
+```sql
+SELECT customer_id, COUNT(*) AS 주문횟수
+FROM orders
+WHERE customer_id IS NOT NULL     -- 이 줄이 필요
+GROUP BY customer_id
+HAVING COUNT(*) >= 2;
+```
+
+이번 강 2번 "NULL도 하나의 그룹이 된다"의 실제 사례입니다. 실행 후 **행 수(5행)를 힌트와 비교**했다면 잡을 수 있었습니다.
+
+### 피드백 2: 9번, HAVING에 별칭과 반올림 값을 쓴 것
+
+`GROUP BY 분류`, `HAVING 평균가격 >= 5000`은 MySQL에서는 돌아가지만 두 가지 주의점이 있습니다.
+
+1. **다른 DB에서는 오류**: 실행 순서상 GROUP BY·HAVING이 SELECT보다 먼저라 별칭이 아직 없습니다. Oracle로 옮기면 깨집니다.
+2. **반올림된 값으로 비교됨**: `평균가격`은 `ROUND(AVG(price))`라서, 평균이 4999.6원이면 반올림해서 5000이 되어 **통과해 버립니다.** "평균 5000원 이상"이라는 기준과 달라집니다.
+
+```sql
+SELECT category AS 분류, ROUND(AVG(price)) AS 평균가격
+FROM menu
+GROUP BY category                 -- 원래 컬럼
+HAVING AVG(price) >= 5000         -- 반올림 전 값으로 비교
+ORDER BY 평균가격 DESC;           -- ORDER BY는 SELECT 뒤라 별칭 OK
+```
+
+### 피드백 3: `price >= 5000`은 WHERE에 써야 합니다
+
+"분류별"이라는 말이 있어서 HAVING이라고 생각하셨는데, 기준은 **조건 안에 집계 함수가 있느냐**입니다.
+
+- `price >= 5000` → `price`는 **메뉴 한 행 한 행의 값**입니다. 집계 함수가 없음 → **WHERE**
+- "5000원 이상 메뉴만 남긴 다음(WHERE) → 분류별로 묶어서 센다(GROUP BY)" 순서입니다.
+
+```sql
+SELECT category, COUNT(*) AS 메뉴수
+FROM menu
+WHERE price >= 5000      -- ① 행 거르기
+GROUP BY category;       -- ② 남은 행을 묶어서 세기
+-- 결과: 논커피 3, 디저트 3, 커피 2
+```
+
+HAVING에 `price >= 5000`을 쓰면, 바구니(그룹) 안에 price가 여러 개라 **어느 price로 비교할지 정할 수 없습니다.** (확인 1번의 `name`과 같은 이유)
+
+### 재확인 (2026-11-22)
+
+- 카드 결제 주문만, 고객별 주문 수 → `payment = '카드'`는 WHERE ✅
+- 평균 가격 5000원 넘는 분류 → `AVG(price) > 5000`은 HAVING ✅
+- 10월 5일 이후(WHERE) + 결제수단별 3건 이상(HAVING) ✅
+- 판정: **WHERE vs HAVING 구분 이해 → 7강 통과**
+
+Related: [8강 JOIN 입문](01-08_JOIN_입문.md) · [6강 집계 함수](01-06_집계_함수.md) · [5강 계산과 함수](01-05_계산과_함수.md) · [오답노트](../오답노트.md)
 Up: [1단계 목차](INDEX.md)
