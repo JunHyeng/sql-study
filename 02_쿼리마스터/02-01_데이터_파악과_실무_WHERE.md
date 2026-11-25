@@ -121,13 +121,31 @@ EXPLAIN SELECT * FROM orders WHERE ordered_at >= '2025-11-01' AND ordered_at < '
 **문제 1.** "주문 데이터가 언제부터 언제까지 있는지, 총 몇 건인지 알려 주세요." 열 이름 `첫주문`, `마지막주문`, `주문수`. (1행)
 
 ```sql
+select
 
+min(ordered_at) as 첫주문,
+
+max(ordered_at) as 마지막주문,
+
+count(*) as 주문수
+
+from orders;
 ```
 
 **문제 2.** "주문 상태 값이 뭐가 있는지, 상태별로 몇 건인지 많은 순으로 보여 주세요." 열 이름 `상태`, `주문수`.
 
 ```sql
+select
 
+status as 상태,
+
+count(*) as 주문수
+
+from orders
+
+group by status
+
+order by 주문수 desc, 상태;
 ```
 
 **문제 3.** "12월 주문이 총 몇 건이에요? (상태 상관없이)" 아래 두 쿼리를 **둘 다** 실행해 보고 결과를 비교한 뒤, 어느 쪽이 맞는지와 이유를 적으세요.
@@ -139,12 +157,18 @@ SELECT COUNT(*) FROM orders WHERE ordered_at BETWEEN '2025-12-01' AND '2025-12-3
 SELECT COUNT(*) FROM orders WHERE ordered_at >= '2025-12-01' AND ordered_at < '2026-01-01';
 ```
 
-> (가) 건 / (나) 건 / 맞는 쪽과 이유:
+> (가) 건 / (나) 건 / 맞는 쪽과 이유:  (나) / 이유 : BETWEEN '2025-12-01' AND '2025-12-31'는 datetime으로 비교될 때 '2025-12-31 00;00:00'으로 바껴서, 그 이후 시간 데이터는 다 누락되어버려서 (나)의 코드 처럼 범위를 확실하게 지정해야함
 
 **문제 4.** "마케팅 수신에 동의했는데 **이메일이 없는** 고객이 몇 명이에요? 이메일 캠페인 대상에서 빠지는 인원이라서요." 열 이름 `이메일없는동의고객`.
 
 ```sql
+select
 
+count(*) as 이메일없는동의고객
+
+from customers
+
+where email is null and marketing_agree = 1;
 ```
 
 ### ★★ 실무
@@ -152,25 +176,87 @@ SELECT COUNT(*) FROM orders WHERE ordered_at >= '2025-12-01' AND ordered_at < '2
 **문제 5.** "2025년 11월 **매출**과 매출이 발생한 주문 건수를 알려 주세요." (매출 정의는 [DB 안내](02-00_베라몰_DB_안내.md) 참고, 날짜 조건에 함수 쓰지 말 것) 열 이름 `주문건수`, `매출`.
 
 ```sql
+select
 
+count(distinct o.order_id) as 주문건수,
+
+sum(oi.unit_price * oi.quantity) as 매출
+
+from orders o
+
+join order_items oi on o.order_id = oi.order_id
+
+where
+
+o.status = '배송완료'
+
+and o.ordered_at >= '2025-11-01'
+
+and ordered_at < '2025-12-01';
 ```
 
 **문제 6.** "다음 달 지역 이벤트 대상자 수가 필요해요. **서울이나 경기**에 살고, **마케팅 수신 동의**했고, **2025년에 가입**한 고객이 몇 명이죠?" 열 이름 `대상자수`. (26명)
 
 ```sql
+select
 
+count(*) as 대상자수
+
+from customers
+
+where
+
+city in ('서울', '경기')
+
+and marketing_agree = 1
+
+and signup_date >= '2025-01-01'
+
+and signup_date < '2026-01-01';
 ```
 
 **문제 7.** "김씨 고객 중에 **동명이인**이 있으면 이름과 인원을 알려 주세요. 고객센터에서 헷갈린대요." 열 이름 `이름`, `인원`. (이름 순)
 
 ```sql
+select
 
+name as 이름,
+
+count(*) as 인원
+
+from customers
+
+where
+
+name like '김%'
+
+group by name
+
+having count(*) >= 2
+
+order by 이름;
 ```
 
 **문제 8.** "**단종된 상품**(is_active = 0)이 마지막으로 팔린 게 언제예요? 상품명, 마지막 주문일시, 판매된 주문상세 건수를 알려 주세요." 열 이름 `상품명`, `마지막주문일시`, `판매건수`. (상태 상관없이)
 
 ```sql
+select
 
+p.name as 상품명,
+
+max(o.ordered_at) as 마지막주문일시,
+
+count(*) as 판매건수
+
+from products p
+
+join order_items oi on p.product_id = oi.product_id
+
+join orders o on oi.order_id = o.order_id
+
+where is_active = 0
+
+group by p.product_id, p.name;
 ```
 
 ### ★★★ 까다로움
